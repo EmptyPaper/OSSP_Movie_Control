@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="|${#temporals.format(date, 'yyyy/M/d')} ${movie.movieName}의 예약)|">2019/5/14의 영화</title>
+</head>
+<body>
+    <a th:href="@{'/movies/' + ${date}}">상영 영화 목록으로 돌아가기</a><br/>
+    <p
+        style="color: red"
+        th:if="${error != null}"
+        th:text="${error}"></p>
+    <form
+        th:object="${bookingForm}"
+        th:action="@{'/booking/'+${date}+'/'+${movieId}}"
+        method = "post">
+        영화 제목 : <span th:text="${movie.movieName}">어벤져스</span><br/>
+        남은 좌석 수 : <span th:text="${availableMovie.seats}" >13</span><br/>
+        예매자 이름 : <span th:text="${user.lastName+' '+user.firstName}">이종빈</span><br/>
+        날짜 : <span th:text="${#temporals.format(date, 'yyyy/M/d')}">2019/2/10</span>
+        <button>예매</button><br/>
+    </form>
+<table>
+    <tr>
+        <th>예매자 기능</th>
+    </tr>
+    <tr th:each="book : ${bookings}">
+        <td><span th:text="${book.user.lastName+' '+book.user.firstName}"></span></td>
+        <td>
+            <form
+                th:action="@{'/booking/'+${date}+'/'+${movieId}}"
+                method ="post"
+                th:if="${user.userId == book.user.userId}">
+                <input
+                    type="hidden"
+                    name="bookingId"
+                    th:value="${book.bookingId}"/>
+                <input
+                    type="submit"
+                    name="cancel"
+                    value="취소"/>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
